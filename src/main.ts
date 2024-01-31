@@ -2,6 +2,7 @@ import MyAlgoConnect from '@randlabs/myalgo-connect'
 // import WalletConnect from "@walletconnect/client"
 import buffer from 'buffer'
 import { PeraWalletConnect } from "@perawallet/connect"
+import { DeflyWalletConnect } from "@blockshake/defly-connect"
 
 import { Wrapper } from "./types/algoSigner"
 import AlgoWrapper from "./types/algoSignerAlgo"
@@ -13,7 +14,7 @@ import setActive, { ActiveSettings } from './active'
 
 export type Ledgers = 'MAINNET' | 'TESTNET'
 
-export const WalletList = ["MyAlgo", "PeraWallet", "AlgoSigner"] as const
+export const WalletList = ["MyAlgo", "PeraWallet", "AlgoSigner", "DeflyWallet"] as const
 
 export type Wallets = typeof WalletList[number]
 
@@ -34,6 +35,7 @@ export interface Pera {
 export interface Provider {
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect
+  defly: DeflyWalletConnect
   algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -49,6 +51,7 @@ export class Wallet {
 
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect;
+  defly: DeflyWalletConnect
   algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -58,6 +61,10 @@ export class Wallet {
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
     this.pera = new PeraWalletConnect({ 
+      shouldShowSignTxnToast: false,
+      chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
+    })
+    this.defly = new DeflyWalletConnect({ 
       shouldShowSignTxnToast: false,
       chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
     })
